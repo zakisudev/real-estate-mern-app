@@ -68,6 +68,7 @@ const login = asyncHandler(async (req, res) => {
           _id: user._id,
           username: user.username,
           email: user.email,
+          avatar: user.avatar,
         },
         status: true,
       });
@@ -80,7 +81,7 @@ const login = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/google-login
 // @access  Public
 const googleLogin = asyncHandler(async (req, res) => {
-  const { email, username, photoURL } = req.body;
+  const { email, username, avatar } = req.body;
 
   try {
     const user = await User.findOne({ email });
@@ -94,7 +95,7 @@ const googleLogin = asyncHandler(async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
-            photoUrl: user.photoURL,
+            avatar: user.avatar,
           },
           status: true,
         });
@@ -109,7 +110,7 @@ const googleLogin = asyncHandler(async (req, res) => {
           Math.random().toString(36).slice(-8),
         email,
         password: hash,
-        photoURL,
+        avatar,
       });
 
       if (!user) {
@@ -127,7 +128,7 @@ const googleLogin = asyncHandler(async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
-            photoUrl: user.photoURL,
+            avatar: user.avatar,
           },
           status: true,
         });

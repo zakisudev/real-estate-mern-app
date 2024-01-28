@@ -19,7 +19,7 @@ const OAuth = () => {
       const res = await signInWithGoogle({
         username: result.user?.displayName,
         email: result.user?.email,
-        photoURL: result.user?.photoURL,
+        avatar: result.user?.photoURL,
       });
 
       if (res.status) {
