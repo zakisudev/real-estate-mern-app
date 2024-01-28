@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser } from '../../services/api';
+import OAuth from '../components/OAuth';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -84,11 +85,12 @@ const SignUp = () => {
 
         <button
           disabled={loading}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-80 mb-3 transition-all"
+          className="bg-blue-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded w-80 mb-3 transition-all uppercase"
           type="submit"
         >
           {loading ? 'Please wait' : 'Sign Up'}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-2 justify-center items-center">
         <p>Already have an account?</p>

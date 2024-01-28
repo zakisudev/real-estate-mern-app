@@ -23,3 +23,12 @@ export const signinUser = async (data) => {
     return error?.response?.data;
   }
 };
+
+export const signInWithGoogle = async (data) => {
+  try {
+    const res = await axios.post(`${AUTH_URL}/google-login`, data);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};

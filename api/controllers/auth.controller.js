@@ -76,4 +76,64 @@ const login = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { signup, login };
+// @desc    Login a user with Google
+// @route   POST /api/auth/google-login
+// @access  Public
+const googleLogin = asyncHandler(async (req, res) => {
+  const { email, username, photoUrl } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return res
+        .cookie('jwt', generateToken(user), { httpOnly: true })
+        .status(200)
+        .json({
+          user: {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+          },
+          status: true,
+        });
+    } else {
+      const password =
+        Math.random().toString(36).slice(-8) + email + process.env.JWT_SECRET;
+      const hash = await hashPassword(password);
+
+      const user = await User.create({
+        username:
+          username.split(' ').join('').toLowerCase() +
+          Math.random().toString(36).slice(-8),
+        email,
+        password: hash,
+        photoUrl,
+      });
+
+      if (!user) {
+        return res.status(400).json({
+          message: 'Something went wrong while saving the user',
+          status: false,
+        });
+      }
+
+      return res
+        .cookie('jwt', generateToken(user), { httpOnly: true })
+        .status(201)
+        .json({
+          user: {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            photoUrl: user.photoUrl,
+          },
+          status: true,
+        });
+    }
+  } catch (err) {
+    return res.status(400).json({ message: err, status: false });
+  }
+});
+
+module.exports = { signup, login, googleLogin };

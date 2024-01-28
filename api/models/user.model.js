@@ -18,6 +18,11 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    photoURL: {
+      type: String,
+      default:
+        'https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg',
+    },
   },
   {
     timestamps: true,
