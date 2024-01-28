@@ -94,6 +94,7 @@ const googleLogin = asyncHandler(async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            photoUrl: user.photoURL,
           },
           status: true,
         });
