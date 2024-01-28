@@ -80,7 +80,7 @@ const login = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/google-login
 // @access  Public
 const googleLogin = asyncHandler(async (req, res) => {
-  const { email, username, photoUrl } = req.body;
+  const { email, username, photoURL } = req.body;
 
   try {
     const user = await User.findOne({ email });
@@ -109,7 +109,7 @@ const googleLogin = asyncHandler(async (req, res) => {
           Math.random().toString(36).slice(-8),
         email,
         password: hash,
-        photoUrl,
+        photoURL,
       });
 
       if (!user) {
@@ -127,7 +127,7 @@ const googleLogin = asyncHandler(async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
-            photoUrl: user.photoUrl,
+            photoUrl: user.photoURL,
           },
           status: true,
         });
