@@ -22,7 +22,6 @@ const SignIn = () => {
       const res = await signinUser(formData);
       if (res.status) {
         dispatch(userLoginSuccess(res?.user));
-        localStorage.setItem('user', JSON.stringify(res?.user));
         toast.success('Signin successful');
         navigate('/', { replace: true });
       } else {
