@@ -4,9 +4,9 @@ const Profile = () => {
   const { currentUser, errorMsg, loading } = useSelector((state) => state.user);
 
   return (
-    <div>
-      <h1 className="text-3xl font-semibold text-center my-5">Profile</h1>
-      <form className="flex flex-col gap-2 w-[400px] justify-center mx-auto">
+    <div className="w-[400px] flex flex-col justify-center items-center mx-auto">
+      <h1 className="text-3xl font-semibold text-center my-3">Profile</h1>
+      <form className="flex flex-col gap-2 w-full justify-center mx-auto">
         {errorMsg && <p className="text-red-500">{errorMsg}</p>}
 
         <img
@@ -60,6 +60,14 @@ const Profile = () => {
           Update
         </button>
       </form>
+      <div className="flex justify-between w-full mt-2">
+        <button className="bg-red-700 text-white rounded-md p-2 mt-2 uppercase hover:bg-red-900 transition-colors font-bold">
+          Delete account
+        </button>
+        <button className="bg-gray-700 text-white rounded-md p-2 mt-2 uppercase hover:bg-gray-900 transition-colors font-bold">
+          Sign out
+        </button>
+      </div>
     </div>
   );
 };
