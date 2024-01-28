@@ -18,10 +18,11 @@ const signup = asyncHandler(async (req, res) => {
         .json({ message: 'User already exists', status: false });
     }
 
+    const hash = await hashPassword(password);
     const user = await User.create({
       username,
       email,
-      password: hashPassword(password).toString(),
+      password: hash,
     });
     if (!user) {
       return res.status(400).json({
@@ -48,18 +49,19 @@ const signup = asyncHandler(async (req, res) => {
 // @access  Public
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
-    const isMatch = comparePassword(password, user.password);
+    const isMatch = await comparePassword(password, user.password);
+
     if (!user || !isMatch) {
       return res
         .status(400)
         .json({ message: 'Invalid email or password', status: false });
     }
 
-    const token = generateToken(user);
     return res
-      .cookie('jwt', token, { httpOnly: true })
+      .cookie('jwt', generateToken(user), { httpOnly: true })
       .status(201)
       .json({
         user: {

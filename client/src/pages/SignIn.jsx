@@ -1,17 +1,37 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signinUser } from '../../services/api';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  userLoginFail,
+  userLoginSuccess,
+  userLoginRequest,
+} from '../redux/user/userSlice';
 
 const SignIn = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const { loading, errorMsg } = useSelector((state) => state.user);
 
   const handleSignin = async (e) => {
     e.preventDefault();
+    dispatch(userLoginRequest());
     try {
       const res = await signinUser(formData);
-      console.log(res);
+      if (res.status) {
+        dispatch(userLoginSuccess(res?.user));
+        localStorage.setItem('user', JSON.stringify(res?.user));
+        toast.success('Signin successful');
+        navigate('/', { replace: true });
+      } else {
+        dispatch(userLoginFail(res.message));
+        toast.error(res?.message);
+      }
     } catch (error) {
       console.log(error);
+      dispatch(userLoginFail(error.message));
     }
   };
 
@@ -33,11 +53,17 @@ const SignIn = () => {
             setFormData({ ...formData, password: e.target.value })
           }
         />
+
+        {errorMsg && (
+          <p className="text-red-500 text-center font-semibold">{errorMsg}</p>
+        )}
+
         <button
+          disabled={loading}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-80 mb-3 transition-all"
           type="submit"
         >
-          Sign in
+          {loading ? 'Please wait' : 'Sign in'}
         </button>
       </form>
       <div className="flex gap-2 mt-2 justify-center items-center">
