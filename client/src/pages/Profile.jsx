@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getDownloadURL,
@@ -67,7 +67,7 @@ const Profile = () => {
       dispatch(updateUserStart());
       const res = await profileUpdate(formData, currentUser._id);
 
-      if (res.success) {
+      if (res.status) {
         dispatch(updateUserSuccess(res.data));
         toast.success('Profile updated successfully');
         return;
@@ -92,7 +92,7 @@ const Profile = () => {
     try {
       dispatch(deleteUserStart());
       const res = await deleteUser(currentUser._id);
-      if (res.success) {
+      if (res.status) {
         dispatch(deleteUserSuccess());
         toast.success('Account deleted successfully');
         navigate('/login');
@@ -216,21 +216,6 @@ const Profile = () => {
 
         {errorMsg && <p className="text-red-500 text-center">{errorMsg}</p>}
 
-        {/* <div className="flex justify-between items-center gap-2">
-          <label htmlFor="bio" className="font-bold uppercase">
-            Bio
-          </label>
-          <textarea
-            name="bio"
-            id="bio"
-            cols="30"
-            rows="5"
-            value={formData?.bio || currentUser?.bio}
-            className="border border-gray-400 rounded-md px-2 py-1 text-lg max-h-20 min-h-10"
-            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-          ></textarea>
-        </div> */}
-
         <button
           type="submit"
           disabled={loading}
@@ -238,6 +223,13 @@ const Profile = () => {
         >
           {loading ? 'Please wait...' : 'Update'}
         </button>
+
+        <Link
+          to="/create-listing"
+          className="bg-green-700 text-center text-white rounded-md p-2 mt-2 uppercase hover:bg-green-900 transition-colors font-bold"
+        >
+          Create Listing
+        </Link>
       </form>
 
       <div className="flex justify-center w-full mt-5">

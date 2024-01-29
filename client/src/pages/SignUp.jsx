@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser } from '../../services/api';
 import OAuth from '../components/OAuth';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const SignUp = () => {
       if (res.status) {
         setErrorMsg('');
         setLoading(false);
+        toast.success("You're signed up successfully, please login");
         navigate('/signin');
       } else {
         setErrorMsg(res.message);

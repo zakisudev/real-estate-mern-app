@@ -9,23 +9,9 @@ const getUsers = asyncHandler(async (_, res) => {
   try {
     const users = await User.find();
     if (!users) throw Error('No users exist');
-    res.status(200).json(users);
+    res.status(200).json(users, { status: true });
   } catch (err) {
-    res.status(400).json({ msg: err.message });
-  }
-});
-
-// @desc    Create a user
-// @route   POST /api/users
-// @access  Public
-const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  try {
-    const newUser = await User.create({ name, email, password });
-    if (!newUser) throw Error('Something went wrong while saving the user');
-    res.status(200).json(newUser);
-  } catch (err) {
-    res.status(400).json({ msg: err.message });
+    res.status(400).json({ msg: err.message, status: false });
   }
 });
 
@@ -34,7 +20,9 @@ const createUser = asyncHandler(async (req, res) => {
 // @access  Public
 const deleteUser = asyncHandler(async (req, res) => {
   if (req.user._id !== req.params.id) {
-    res.status(401).json('You can update only your account!');
+    res
+      .status(401)
+      .json({ message: 'You can update only your account!', status: false });
   }
 
   try {
@@ -50,9 +38,9 @@ const deleteUser = asyncHandler(async (req, res) => {
         httpOnly: true,
         expires: new Date(0),
       })
-      .json({ success: true });
+      .json({ status: true });
   } catch (err) {
-    res.status(400).json({ msg: err.message });
+    res.status(400).json({ msg: err.message, status: false });
   }
 });
 
@@ -61,7 +49,9 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @access  Public
 const updateUser = asyncHandler(async (req, res) => {
   if (req.user._id !== req.params.id) {
-    res.status(401).json('You can update only your account!');
+    res
+      .status(401)
+      .json({ message: 'You can update only your account!', status: false });
   }
 
   if (req.body.password) {
@@ -93,11 +83,11 @@ const updateUser = asyncHandler(async (req, res) => {
       username: updatedUser.username,
       email: updatedUser.email,
       avatar: updatedUser.avatar,
-      success: true,
+      status: true,
     });
   } catch (err) {
-    res.status(400).json({ msg: err.message });
+    res.status(400).json({ msg: err.message, status: false });
   }
 });
 
-module.exports = { getUsers, createUser, deleteUser, updateUser };
+module.exports = { getUsers, deleteUser, updateUser };

@@ -94,7 +94,7 @@ const logout = asyncHandler(async (req, res) => {
         httpOnly: true,
         expires: new Date(0),
       })
-      .json({ success: true });
+      .json({ status: true });
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }

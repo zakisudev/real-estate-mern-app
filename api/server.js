@@ -1,12 +1,14 @@
+const path = require('path');
 require('dotenv').config();
 const express = require('express');
 const port = process.env.PORT || 4000;
 const connectDB = require('./config/db');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const userRoutes = require('./routes/user.route');
 const authRoutes = require('./routes/auth.route');
-const { errorHandler, notFound } = require('./middlewares/errorHandler');
+const listingRoutes = require('./routes/listing.route');
 
 // Connect Database
 connectDB();
@@ -24,6 +26,7 @@ app.use(cookieParser());
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/listings', listingRoutes);
 
 // API Route
 if (process.env.NODE_ENV === 'production') {

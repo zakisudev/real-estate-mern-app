@@ -26,7 +26,7 @@ const Header = () => {
     dispatch(userLogoutStart());
     try {
       const res = await logoutUser();
-      if (res.success) {
+      if (res.status) {
         dispatch(userLogoutSuccess());
         navigate('/');
       } else {
