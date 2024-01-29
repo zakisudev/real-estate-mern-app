@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Layout = () => {
   return (
-    <div>
+    <div className="min-h-screen">
       <Header />
       <Outlet />
       <ToastContainer

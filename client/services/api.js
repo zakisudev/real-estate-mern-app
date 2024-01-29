@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AUTH_URL, USERS_URL } from '../config/constants';
+import { AUTH_URL, USERS_URL, LISTINGS_URL } from '../config/constants';
 
 export const signupUser = async (data) => {
   try {
@@ -54,6 +54,15 @@ export const profileUpdate = async (data, id) => {
 export const deleteUser = async (id) => {
   try {
     const res = await axios.delete(`${USERS_URL}/delete/${id}`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+export const createListing = async (data) => {
+  try {
+    const res = await axios.post(`${LISTINGS_URL}/create`, data);
     return res?.data;
   } catch (error) {
     return error?.response?.data;

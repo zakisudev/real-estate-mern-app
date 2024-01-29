@@ -6,14 +6,48 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
+import { createListing } from '../../services/api';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const CreateListing = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [formData, setFormData] = useState({
     imageURLs: [],
+    title: '',
+    description: '',
+    address: '',
+    type: 'rent',
+    parking: false,
+    furnished: false,
+    offer: false,
+    bedrooms: 1,
+    bathrooms: 1,
+    regularPrice: 500,
+    discountPrice: 0,
   });
+  const reset = () => {
+    setImages([]);
+    setFormData({
+      imageURLs: [],
+      title: '',
+      description: '',
+      address: '',
+      type: 'rent',
+      parking: false,
+      furnished: false,
+      offer: false,
+      bedrooms: 1,
+      bathrooms: 1,
+      regularPrice: 500,
+      discountPrice: 0,
+    });
+  };
   const [imageUploadError, setImageUploadError] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
+  const [listingError, setListingError] = useState(false);
+  const [listingLoading, setListingLoading] = useState(false);
 
   const handleUploadImages = () => {
     if (images.length > 0 && images.length + formData.imageURLs?.length < 7) {
@@ -65,81 +99,165 @@ const CreateListing = () => {
     });
   };
 
+  const handleCreateListing = async (e) => {
+    e.preventDefault();
+    setListingLoading(true);
+    try {
+      if (formData.imageURLs.length < 1) {
+        return setListingError('You must upload at least one image');
+      }
+      if (+formData.regularPrice < +formData.discountPrice) {
+        return setListingError(
+          'Discount price must be lower than regular price'
+        );
+      }
+
+      const res = await createListing(formData);
+      if (res.status) {
+        toast.success('Listing created successfully');
+        setListingLoading(false);
+        setListingError(null);
+        reset();
+        navigate(`/listing/${res?.createdListing?._id}`);
+      } else {
+        setListingLoading(false);
+        setListingError(res.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setListingLoading(false);
+      setListingError('Error creating listing, try again');
+    }
+  };
+
   return (
-    <main className="mx-auto max-w-4xl p-3">
+    <main className="mx-auto max-w-4xl p-3 h-full">
       <h1 className="text-3xl font-semibold text-center my-5">
         Create Listing
       </h1>
-      <form className="flex flex-col justify-start items-center sm:flex-row p-3 gap-3 w-full mx-auto">
-        <div className="flex flex-col justify-center items-center w-1/2 h-full flex-1">
+      <form
+        onSubmit={handleCreateListing}
+        className="flex flex-col justify-start items-center sm:flex-row sm:justify-start p-3 gap-3 w-full h-full mx-auto"
+      >
+        <div className="flex flex-col justify-center items-center w-1/2">
           <input
             className="border-2 border-gray-300 rounded-md p-2 w-80 mb-3"
             type="text"
+            id="title"
+            value={formData.title}
             placeholder="Title"
-            // required
+            required
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
           />
           <textarea
             className="border-2 border-gray-300 rounded-md p-2 w-80 mb-3 max-h-20 min-h-10"
             type="text"
+            id="description"
+            value={formData.description}
             placeholder="Description"
-            // required
+            required
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
           />
           <input
             className="border-2 border-gray-300 rounded-md p-2 w-80 mb-3"
             type="text"
+            id="address"
+            value={formData.address}
             placeholder="Address"
-            // required
+            required
+            onChange={(e) =>
+              setFormData({ ...formData, address: e.target.value })
+            }
           />
           <div className="flex gap-3 w-fit">
             <div className="flex flex-col gap-2 justify-center items-center">
               <h2 className="flex">Type</h2>
               <div className="flex gap-2">
                 <input
+                  id="sale"
                   type="checkbox"
                   name="type"
                   className="p-1"
                   value="sale"
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value })
+                  }
+                  checked={formData.type === 'sale'}
                 />
                 <label htmlFor="sale">Sale</label>
               </div>
               <div className="flex gap-2">
                 <input
                   type="checkbox"
+                  id="rent"
                   name="type"
                   className="p-1"
-                  required
                   value="rent"
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value })
+                  }
+                  checked={formData.type === 'rent'}
                 />
                 <label htmlFor="rent">Rent</label>
               </div>
             </div>
 
             <div className="flex justify-center items-center gap-2">
-              <input type="checkbox" id="parking" className="p-1" />
+              <input
+                type="checkbox"
+                id="parking"
+                className="p-1"
+                checked={formData.parking}
+                onChange={(e) =>
+                  setFormData({ ...formData, parking: e.target.checked })
+                }
+              />
               <label htmlFor="parking">Parking</label>
             </div>
 
             <div className="flex justify-center items-center gap-2">
-              <input type="checkbox" id="furnished" className="p-1" />
+              <input
+                type="checkbox"
+                id="furnished"
+                className="p-1"
+                checked={formData.furnished}
+                onChange={(e) =>
+                  setFormData({ ...formData, furnished: e.target.checked })
+                }
+              />
               <label htmlFor="furnished">Furnished</label>
             </div>
 
             <div className="flex justify-center items-center gap-2">
-              <input type="checkbox" id="offer" className="p-1" />
+              <input
+                type="checkbox"
+                id="offer"
+                className="p-1"
+                checked={formData.offer}
+                onChange={(e) =>
+                  setFormData({ ...formData, offer: e.target.checked })
+                }
+              />
               <label htmlFor="offer">Offer</label>
             </div>
           </div>
 
           <div className="flex mt-2 w-80 gap-6 flex-wrap">
-            {/* <div className="flex flex-col gap-2 justify-center items-center"> */}
             <div className="flex gap-2">
               <input
                 type="text"
                 className="border-2 border-gray-300 rounded-md p-1 w-10"
                 min={1}
                 max={10}
-                // required
+                value={formData.bedrooms}
                 inputMode="numeric"
+                onChange={(e) =>
+                  setFormData({ ...formData, bedrooms: e.target.value })
+                }
               />
               <label htmlFor="bedrooms">Bedrooms</label>
             </div>
@@ -149,8 +267,11 @@ const CreateListing = () => {
                 className="border-2 border-gray-300 rounded-md p-1 w-10"
                 min={1}
                 max={10}
-                // required
+                value={formData.bathrooms}
                 inputMode="numeric"
+                onChange={(e) =>
+                  setFormData({ ...formData, bathrooms: e.target.value })
+                }
               />
               <label htmlFor="bathrooms">Bathrooms</label>
             </div>
@@ -158,39 +279,49 @@ const CreateListing = () => {
               <input
                 className="border-2 border-gray-300 rounded-md p-1 w-10"
                 type="text"
-                min={1}
-                max={100000}
-                // required
+                min={500}
+                value={formData.regularPrice}
                 inputMode="numeric"
+                onChange={(e) =>
+                  setFormData({ ...formData, regularPrice: e.target.value })
+                }
               />
               <label htmlFor="regularPrice">
                 <div className="flex flex-col">
                   <p>Regular price</p>
-                  <span className="text-xs">$/month</span>
+                  {formData.type !== 'sale' && (
+                    <span className="text-xs">($ / month)</span>
+                  )}
                 </div>
               </label>
             </div>
-            <div className="flex gap-2">
-              <input
-                className="border-2 border-gray-300 rounded-md p-1 w-10"
-                type="text"
-                min={1}
-                max={100000}
-                // required
-                inputMode="numeric"
-              />
-              <label htmlFor="discountPrice">
-                <div className="flex flex-col">
-                  <p>Discount price</p>
-                  <span className="text-xs">$/month</span>
-                </div>
-              </label>
-            </div>
-            {/* </div> */}
+
+            {formData.offer && (
+              <div className="flex gap-2">
+                <input
+                  className="border-2 border-gray-300 rounded-md p-1 w-10"
+                  type="text"
+                  min={500}
+                  value={formData.discountPrice}
+                  inputMode="numeric"
+                  onChange={(e) =>
+                    setFormData({ ...formData, discountPrice: e.target.value })
+                  }
+                />
+                <label htmlFor="discountPrice">
+                  <div className="flex flex-col">
+                    <p>Discount price</p>
+                    {formData.type !== 'sale' && (
+                      <span className="text-xs">($ / month)</span>
+                    )}
+                  </div>
+                </label>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col flex-1 items-center h-full w-full mt-2">
+        <div className="flex flex-col justify-start items-center w-1/2 h-fit mt-2">
           <div className="flex">
             <p className="font-semibold">
               Images:{' '}
@@ -208,11 +339,11 @@ const CreateListing = () => {
               accept="image/.*"
               placeholder="Title"
               multiple
-              // required
+              required
             />
             <button
-              disabled={imageUploading}
               type="button"
+              disabled={imageUploading}
               onClick={handleUploadImages}
               className="bg-green-500 text-white uppercase px-2 py-1 rounded-md hover:shadow-md font-bold"
             >
@@ -237,6 +368,7 @@ const CreateListing = () => {
                     />
                     <button
                       type="button"
+                      disabled={imageUploading}
                       onClick={() =>
                         setFormData({
                           ...formData,
@@ -255,9 +387,17 @@ const CreateListing = () => {
             </div>
           )}
 
+          {listingError && (
+            <p className="text-red-500 text-center mt-2">{listingError}</p>
+          )}
+
           <div className="flex mt-5">
-            <button className="bg-blue-700 text-white px-4 py-2 rounded-md w-80 mb-3 hover:bg-blue-900 transition-all">
-              Create Listing
+            <button
+              type="submit"
+              disabled={listingLoading || imageUploading}
+              className="bg-blue-700 text-white px-4 py-2 rounded-md w-80 mb-3 hover:bg-blue-900 transition-all"
+            >
+              {listingLoading ? 'Creating...' : 'Create Listing'}
             </button>
           </div>
         </div>
