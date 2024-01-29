@@ -33,7 +33,7 @@ const Header = () => {
             <li className="mx-2 hidden sm:flex">
               <Link to="profile">
                 <img
-                  src={currentUser.avatar}
+                  src={currentUser?.avatar}
                   alt="avatar"
                   className="w-8 h-8 rounded-full object-cover"
                 />

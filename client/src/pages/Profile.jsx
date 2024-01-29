@@ -1,5 +1,6 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   getDownloadURL,
   getStorage,
@@ -8,14 +9,18 @@ import {
 } from 'firebase/storage';
 import { app } from '../firebase';
 import {
+  deleteUserFail,
+  deleteUserStart,
+  deleteUserSuccess,
   updateUserFail,
   updateUserStart,
   updateUserSuccess,
 } from '../redux/user/userSlice';
-import { profileUpdate } from '../../services/api';
+import { deleteUser, profileUpdate } from '../../services/api';
 import { toast } from 'react-toastify';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const photoRef = useRef(null);
   const { currentUser, errorMsg, loading } = useSelector((state) => state.user);
@@ -73,6 +78,33 @@ const Profile = () => {
     } catch (error) {
       console.log(error);
       dispatch(updateUserFail(error?.message));
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete your account? This action is irreversible'
+      )
+    ) {
+      return;
+    }
+    try {
+      dispatch(deleteUserStart());
+      const res = await deleteUser(currentUser._id);
+      if (res.success) {
+        dispatch(deleteUserSuccess());
+        toast.success('Account deleted successfully');
+        navigate('/login');
+        return;
+      } else {
+        dispatch(deleteUserFail(res.message));
+        toast.error(res.message);
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(deleteUserFail(error.message));
     }
   };
 
@@ -184,18 +216,36 @@ const Profile = () => {
 
         {errorMsg && <p className="text-red-500 text-center">{errorMsg}</p>}
 
+        {/* <div className="flex justify-between items-center gap-2">
+          <label htmlFor="bio" className="font-bold uppercase">
+            Bio
+          </label>
+          <textarea
+            name="bio"
+            id="bio"
+            cols="30"
+            rows="5"
+            value={formData?.bio || currentUser?.bio}
+            className="border border-gray-400 rounded-md px-2 py-1 text-lg max-h-20 min-h-10"
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          ></textarea>
+        </div> */}
+
         <button
           type="submit"
           disabled={loading}
           className="bg-blue-700 text-white rounded-md p-2 mt-2 uppercase hover:bg-blue-900 transition-colors font-bold"
         >
-          {loading ? 'Loading...' : 'Update'}
+          {loading ? 'Please wait...' : 'Update'}
         </button>
       </form>
 
       <div className="flex justify-center w-full mt-5">
-        <button className="bg-red-700 text-white rounded-md px-2 py-1 mt-2 uppercase hover:bg-red-900 transition-colors font-bold">
-          Delete account
+        <button
+          onClick={handleDeleteProfile}
+          className="bg-red-700 text-white rounded-md px-2 py-1 mt-2 uppercase hover:bg-red-900 transition-colors font-bold"
+        >
+          {loading ? 'Please wait...' : 'Delete account'}
         </button>
       </div>
     </div>

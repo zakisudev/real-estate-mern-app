@@ -41,3 +41,12 @@ export const profileUpdate = async (data, id) => {
     return error?.response?.data;
   }
 };
+
+export const deleteUser = async (id) => {
+  try {
+    const res = await axios.delete(`${USERS_URL}/delete/${id}`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
