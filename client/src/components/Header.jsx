@@ -85,7 +85,7 @@ const Header = () => {
                       : 'hidden'
                   }
                 >
-                  <Link to="/profile" className="text-lg font-bold">
+                  <Link to="/profile" className="text-lg font-semibold">
                     Profile
                   </Link>
                   <span
