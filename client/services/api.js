@@ -68,3 +68,21 @@ export const createListing = async (data) => {
     return error?.response?.data;
   }
 };
+
+export const updateListing = async (id) => {
+  try {
+    const res = await axios.get(`${USERS_URL}/listings/${id}`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+export const deleteListing = async (id) => {
+  try {
+    const res = await axios.delete(`${USERS_URL}/listings/${id}`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
