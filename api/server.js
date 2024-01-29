@@ -3,6 +3,7 @@ const express = require('express');
 const port = process.env.PORT || 4000;
 const connectDB = require('./config/db');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/user.route');
 const authRoutes = require('./routes/auth.route');
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
@@ -14,6 +15,10 @@ const app = express();
 // Init Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// cors
+app.use(cors());
+app.use(cookieParser());
 
 // Define Routes
 
@@ -32,9 +37,6 @@ if (process.env.NODE_ENV === 'production') {
     res.send('API is running...');
   });
 }
-
-// cors
-app.use(cors());
 
 // middleware
 app.use(notFound);

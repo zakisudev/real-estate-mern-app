@@ -52,6 +52,12 @@ const login = asyncHandler(async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: 'Invalid email or password', status: false });
+    }
+
     const isMatch = await comparePassword(password, user.password);
 
     if (!user || !isMatch) {
@@ -73,7 +79,7 @@ const login = asyncHandler(async (req, res) => {
         status: true,
       });
   } catch (err) {
-    return res.status(400).json({ message: err, status: false });
+    return res.status(400).json({ message: err?.message, status: false });
   }
 });
 

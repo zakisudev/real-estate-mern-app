@@ -1,9 +1,11 @@
 const User = require('../models/user.model');
+const asyncHandler = require('express-async-handler');
+const { hashPassword } = require('../utils/security');
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Public
-const getUsers = async (_, res) => {
+const getUsers = asyncHandler(async (_, res) => {
   try {
     const users = await User.find();
     if (!users) throw Error('No users exist');
@@ -11,12 +13,12 @@ const getUsers = async (_, res) => {
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
-};
+});
 
 // @desc    Create a user
 // @route   POST /api/users
 // @access  Public
-const createUser = async (req, res) => {
+const createUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const newUser = await User.create({ name, email, password });
@@ -25,12 +27,12 @@ const createUser = async (req, res) => {
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
-};
+});
 
 // @desc    Delete a user
 // @route   DELETE /api/users/:id
 // @access  Public
-const deleteUser = async (req, res) => {
+const deleteUser = asyncHandler(async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) throw Error('No user found');
@@ -38,24 +40,51 @@ const deleteUser = async (req, res) => {
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
-};
+});
 
 // @desc    Update a user
 // @route   PUT /api/users/:id
 // @access  Public
-const updateUser = async (req, res) => {
-  const { name, email, password } = req.body;
+const updateUser = asyncHandler(async (req, res) => {
+  console.log(req.user);
+  if (req.user._id !== req.params.id) {
+    res.status(401).json('You can update only your account!');
+  }
+
+  if (req.body.password) {
+    const hash = await hashPassword(req.body.password);
+    req.body.password = hash;
+  }
+
+  const { username, email, password, avatar } = req.body;
+
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, {
-      name,
-      email,
-      password,
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          username,
+          email,
+          password,
+          avatar,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      res.status(404).json({ message: 'User not found!', status: false });
+    }
+
+    res.status(200).json({
+      username: updatedUser.username,
+      email: updatedUser.email,
+      avatar: updatedUser.avatar,
+      success: true,
     });
-    if (!user) throw Error('No user found');
-    res.status(200).json({ success: true });
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
-};
+});
 
 module.exports = { getUsers, createUser, deleteUser, updateUser };

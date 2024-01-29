@@ -89,7 +89,7 @@ const Profile = () => {
             type="text"
             name="username"
             id="username"
-            value={currentUser.username}
+            value={formData.username || currentUser.username}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
           />
         </div>
@@ -102,7 +102,7 @@ const Profile = () => {
             type="email"
             name="email"
             id="email"
-            value={currentUser.email}
+            value={formData.email || currentUser.email}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
           />
         </div>
@@ -115,6 +115,7 @@ const Profile = () => {
             type="password"
             name="password"
             id="password"
+            value={formData.password}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
           />
         </div>
@@ -127,6 +128,7 @@ const Profile = () => {
             type="password"
             name="confirmPassword"
             id="confirmPassword"
+            value={formData.confirmPassword}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
           />
         </div>
@@ -140,13 +142,9 @@ const Profile = () => {
         </button>
       </form>
 
-      <div className="flex justify-between w-full mt-5">
-        <button className="bg-red-700 text-white rounded-md p-2 mt-2 uppercase hover:bg-red-900 transition-colors font-bold">
+      <div className="flex justify-center w-full mt-5">
+        <button className="bg-red-700 text-white rounded-md px-2 py-1 mt-2 uppercase hover:bg-red-900 transition-colors font-bold">
           Delete account
-        </button>
-
-        <button className="bg-gray-700 text-white rounded-md p-2 mt-2 uppercase hover:bg-gray-900 transition-colors font-bold">
-          Sign out
         </button>
       </div>
     </div>
