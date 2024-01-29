@@ -33,10 +33,24 @@ const createUser = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:id
 // @access  Public
 const deleteUser = asyncHandler(async (req, res) => {
+  if (req.user._id !== req.params.id) {
+    res.status(401).json('You can update only your account!');
+  }
+
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) throw Error('No user found');
-    res.status(200).json({ success: true });
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found!', status: false });
+    }
+
+    res
+      .status(200)
+      .cookie('jwt', null, {
+        httpOnly: true,
+        expires: new Date(0),
+      })
+      .json({ success: true });
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
