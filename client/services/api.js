@@ -33,6 +33,15 @@ export const signInWithGoogle = async (data) => {
   }
 };
 
+export const logoutUser = async () => {
+  try {
+    const res = await axios.post(`${AUTH_URL}/logout`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
 export const profileUpdate = async (data, id) => {
   try {
     const res = await axios.post(`${USERS_URL}/update/${id}`, data);

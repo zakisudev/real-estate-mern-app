@@ -83,6 +83,23 @@ const login = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Logout a user
+// @route   POST /api/auth/logout
+// @access  Public
+const logout = asyncHandler(async (req, res) => {
+  try {
+    res
+      .status(200)
+      .cookie('jwt', null, {
+        httpOnly: true,
+        expires: new Date(0),
+      })
+      .json({ success: true });
+  } catch (err) {
+    res.status(400).json({ msg: err.message });
+  }
+});
+
 // @desc    Login a user with Google
 // @route   POST /api/auth/google-login
 // @access  Public
@@ -144,4 +161,4 @@ const googleLogin = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { signup, login, googleLogin };
+module.exports = { signup, login, logout, googleLogin };
