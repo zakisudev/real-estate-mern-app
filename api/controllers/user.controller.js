@@ -46,7 +46,6 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id
 // @access  Public
 const updateUser = asyncHandler(async (req, res) => {
-  console.log(req.user);
   if (req.user._id !== req.params.id) {
     res.status(401).json('You can update only your account!');
   }
