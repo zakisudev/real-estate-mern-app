@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const Listing = require('../models/listing.model');
 const asyncHandler = require('express-async-handler');
 const { hashPassword } = require('../utils/security');
 
@@ -90,4 +91,23 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getUsers, deleteUser, updateUser };
+const getUserListing = asyncHandler(async (req, res) => {
+  if (req.user._id !== req.params.id) {
+    res
+      .status(401)
+      .json({ message: 'You can only view your listings!', status: false });
+  }
+
+  try {
+    const listings = await Listing.find({ userRef: req.params.id });
+    if (!listings) {
+      res.status(404).json({ message: 'No listings found!', status: false });
+    }
+
+    res.status(200).json(listings, { status: true });
+  } catch (err) {
+    res.status(400).json({ msg: err.message, status: false });
+  }
+});
+
+module.exports = { getUsers, deleteUser, updateUser, getUserListing };
