@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 import {
   getDownloadURL,
@@ -7,8 +7,16 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
+import {
+  updateUserFail,
+  updateUserStart,
+  updateUserSuccess,
+} from '../redux/user/userSlice';
+import { profileUpdate } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const photoRef = useRef(null);
   const { currentUser, errorMsg, loading } = useSelector((state) => state.user);
   const [pic, setPic] = useState(null);
@@ -25,6 +33,7 @@ const Profile = () => {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
+        setPicError(false);
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setPicPercentage(Math.round(progress));
@@ -41,6 +50,32 @@ const Profile = () => {
     );
   };
 
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    dispatch(updateUserStart());
+    try {
+      if (formData.password !== formData.confirmPassword) {
+        dispatch(updateUserFail('Passwords do not match'));
+        return;
+      }
+
+      dispatch(updateUserStart());
+      const res = await profileUpdate(formData, currentUser._id);
+
+      if (res.success) {
+        dispatch(updateUserSuccess(res.data));
+        toast.success('Profile updated successfully');
+        return;
+      } else {
+        dispatch(updateUserFail(res.message));
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(updateUserFail(error?.message));
+    }
+  };
+
   useEffect(() => {
     if (pic) {
       handleUploadPic(pic);
@@ -50,9 +85,10 @@ const Profile = () => {
   return (
     <div className="w-[400px] flex flex-col justify-center items-center mx-auto">
       <h1 className="text-3xl font-semibold text-center my-3">Profile</h1>
-      <form className="flex flex-col gap-3 w-full justify-center mx-auto">
-        {errorMsg && <p className="text-red-500">{errorMsg}</p>}
-
+      <form
+        onSubmit={handleProfileUpdate}
+        className="flex flex-col gap-3 w-full justify-center mx-auto"
+      >
         <input
           type="file"
           ref={photoRef}
@@ -62,14 +98,15 @@ const Profile = () => {
         />
         <img
           onClick={() => photoRef.current.click()}
-          src={formData.avatar || currentUser.avatar}
+          src={formData?.avatar || currentUser?.avatar}
           alt="avatar"
-          className="w-20 h-20 rounded-full mx-auto cursor-pointer"
+          className="w-20 h-20 rounded-full mx-auto cursor-pointer object-cover"
         />
 
         {picError ? (
           <p className="text-red-700 text-center">
-            Error uploading profile picture
+            Error uploading profile picture <br />
+            picture must be less than 4mb
           </p>
         ) : picPercentage > 0 && picPercentage < 100 ? (
           <p className="text-gray-500 text-center">
@@ -89,8 +126,11 @@ const Profile = () => {
             type="text"
             name="username"
             id="username"
-            value={formData.username || currentUser.username}
+            value={formData?.username || currentUser?.username}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
+            onChange={(e) =>
+              setFormData({ ...formData, username: e.target.value })
+            }
           />
         </div>
 
@@ -102,8 +142,11 @@ const Profile = () => {
             type="email"
             name="email"
             id="email"
-            value={formData.email || currentUser.email}
+            value={formData?.email || currentUser?.email}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
           />
         </div>
 
@@ -115,8 +158,11 @@ const Profile = () => {
             type="password"
             name="password"
             id="password"
-            value={formData.password}
+            value={formData?.password}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
           />
         </div>
 
@@ -128,17 +174,22 @@ const Profile = () => {
             type="password"
             name="confirmPassword"
             id="confirmPassword"
-            value={formData.confirmPassword}
+            value={formData?.confirmPassword}
             className="border border-gray-400 rounded-md px-2 py-1 text-lg"
+            onChange={(e) =>
+              setFormData({ ...formData, confirmPassword: e.target.value })
+            }
           />
         </div>
+
+        {errorMsg && <p className="text-red-500 text-center">{errorMsg}</p>}
 
         <button
           type="submit"
           disabled={loading}
           className="bg-blue-700 text-white rounded-md p-2 mt-2 uppercase hover:bg-blue-900 transition-colors font-bold"
         >
-          Update
+          {loading ? 'Loading...' : 'Update'}
         </button>
       </form>
 

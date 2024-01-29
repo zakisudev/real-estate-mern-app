@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AUTH_URL } from '../config/constants';
+import { AUTH_URL, USERS_URL } from '../config/constants';
 
 export const signupUser = async (data) => {
   try {
@@ -27,6 +27,15 @@ export const signinUser = async (data) => {
 export const signInWithGoogle = async (data) => {
   try {
     const res = await axios.post(`${AUTH_URL}/google-login`, data);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+export const profileUpdate = async (data, id) => {
+  try {
+    const res = await axios.post(`${USERS_URL}/update/${id}`, data);
     return res?.data;
   } catch (error) {
     return error?.response?.data;
