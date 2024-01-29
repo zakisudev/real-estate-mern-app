@@ -20,7 +20,7 @@ import {
   deleteListing,
   deleteUser,
   profileUpdate,
-  updateListing,
+  getListings,
 } from '../../services/api';
 import { toast } from 'react-toastify';
 
@@ -124,7 +124,7 @@ const Profile = () => {
     }
     setFetchingListings(true);
     try {
-      const res = await updateListing(currentUser._id);
+      const res = await getListings(currentUser._id);
       if (res.status) {
         setUserListings(res?.listings);
         setFetchingListings(false);
@@ -148,6 +148,7 @@ const Profile = () => {
       const res = await deleteListing(id);
       if (res.status) {
         toast.success('Listing deleted successfully');
+        setUserListings(userListings.filter((listing) => listing._id !== id));
         return;
       } else {
         toast.error(res.message);
@@ -336,7 +337,7 @@ const Profile = () => {
 
                     <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
                       <Link
-                        to={`/edit-listing/${listing._id}`}
+                        to={`/update-listing/${listing._id}`}
                         className="bg-blue-700 text-white rounded-md px-2 py-1 uppercase hover:bg-blue-900 transition-colors font-bold text-sm"
                       >
                         Edit
@@ -357,8 +358,10 @@ const Profile = () => {
           )}
         </div>
       </div>
+
       <div className="flex justify-end w-full mt-5 mr-2">
         <button
+          disabled={loading}
           onClick={handleDeleteProfile}
           className="bg-red-700 text-white rounded-md px-2 py-1 uppercase hover:bg-red-900 transition-colors font-bold text-sm"
         >

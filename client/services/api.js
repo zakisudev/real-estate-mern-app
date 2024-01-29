@@ -69,9 +69,18 @@ export const createListing = async (data) => {
   }
 };
 
-export const updateListing = async (id) => {
+export const getListings = async (id) => {
   try {
-    const res = await axios.get(`${USERS_URL}/listings/${id}`);
+    const res = await axios.get(`${LISTINGS_URL}/user/${id}`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+export const getListing = async (id) => {
+  try {
+    const res = await axios.get(`${LISTINGS_URL}/${id}`);
     return res?.data;
   } catch (error) {
     return error?.response?.data;
@@ -80,7 +89,16 @@ export const updateListing = async (id) => {
 
 export const deleteListing = async (id) => {
   try {
-    const res = await axios.delete(`${USERS_URL}/listings/${id}`);
+    const res = await axios.delete(`${LISTINGS_URL}/${id}`);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+export const updateListing = async (data, id) => {
+  try {
+    const res = await axios.put(`${LISTINGS_URL}/${id}`, data);
     return res?.data;
   } catch (error) {
     return error?.response?.data;

@@ -91,51 +91,8 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Get all listings of a user
-// @route   GET /api/users/listings/:id
-// @access  Private
-const getUserListing = asyncHandler(async (req, res) => {
-  if (req.user._id !== req.params.id) {
-    res
-      .status(401)
-      .json({ message: 'You can only view your listings!', status: false });
-  }
-
-  try {
-    const listings = await Listing.find({ userRef: req.params.id });
-    if (!listings) {
-      res.status(404).json({ message: 'No listings found!', status: false });
-    }
-
-    res.status(200).json({ listings, status: true });
-  } catch (err) {
-    res.status(400).json({ msg: err.message, status: false });
-  }
-});
-
-// @desc    Delete a listing
-// @route   DELETE /api/users/listings/:id
-// @access  Private
-
-const deleteListing = asyncHandler(async (req, res) => {
-  const listing = await Listing.findByIdAndDelete(req.params.id);
-  if (listing.userRef !== req.user._id.toString()) {
-    res
-      .status(401)
-      .json({ message: 'You can only delete your listings!', status: false });
-  }
-
-  if (!listing) {
-    res.status(404).json({ message: 'Listing not found!', status: false });
-  }
-
-  res.status(200).json({ status: true });
-});
-
 module.exports = {
   getUsers,
   deleteUser,
   updateUser,
-  getUserListing,
-  deleteListing,
 };

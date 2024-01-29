@@ -13,6 +13,7 @@ import Layout from './pages/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import CreateListing from './pages/CreateListing';
 import Listing from './pages/Listing';
+import UpdateListing from './pages/UpdateListing';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
         <Route path="profile" element={<Profile />} />
         <Route path="create-listing" element={<CreateListing />} />
         <Route path="listing/:id" element={<Listing />} />
+        <Route path="update-listing/:id" element={<UpdateListing />} />
       </Route>
     </Route>
   )
