@@ -3,6 +3,7 @@ const verifyUser = require('../middlewares/authMiddleware');
 const {
   createListing,
   getUserListing,
+  getListings,
   getListing,
   deleteListing,
   updateListing,
@@ -19,6 +20,10 @@ router.post('/create', verifyUser, createListing);
 // @access  Private
 router.get('/user/:id', verifyUser, getUserListing);
 
+// @desc    Get all listings
+// @route   GET /api/listings/
+// @access  Public
+router.get('/', getListings);
 // @desc    Get a listing
 // @route   GET /api/listings/:id
 // @access  Public
