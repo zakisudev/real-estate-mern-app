@@ -23,6 +23,7 @@ import {
   getListings,
 } from '../../services/api';
 import { toast } from 'react-toastify';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -167,9 +168,9 @@ const Profile = () => {
   }, [pic]);
 
   return (
-    <div className="w-full sm:w-[80%] min-h-full flex flex-col justify-center items-center mx-auto">
-      <div className="h-full flex gap-5 flex-col sm:flex-row sm:max-h-[500px]">
-        <div className="flex flex-col w-[360px] h-full">
+    <div className="w-full sm:w-[90%] min-h-full px-3 flex flex-col justify-center items-center mx-auto">
+      <div className="h-full flex gap-5 flex-col w-full sm:flex-row sm:max-h-[500px]">
+        <div className="flex flex-col w-full h-full flex-1">
           <h1 className="text-3xl font-semibold text-center my-3">Profile</h1>
 
           <form
@@ -290,8 +291,8 @@ const Profile = () => {
           </form>
         </div>
 
-        <div className="flex flex-col w-[360px]">
-          <div className="flex justify-center mt-5">
+        <div className="flex flex-col w-full flex-1">
+          <div className="flex justify-center mt-5 w-full">
             <button
               onClick={handleUserListings}
               disabled={fetchingListings}
@@ -323,36 +324,38 @@ const Profile = () => {
                         className="w-full h-16 object-cover rounded-md"
                       />
                     </Link>
-                    <div className="flex flex-col w-full justify-center mx-auto h-16">
+                    <div className="flex flex-col w-full justify-center mx-auto h-16 text-xs">
                       <h1 className="text-lg font-semibold text-center">
                         {listing?.title}
                       </h1>
-                      <p className="text-center text-gray-500 flex-1">
-                        {listing?.description}
+                      <p className="text-center text-gray-500 flex-1 max-h-5 truncate">
+                        {listing?.description.slice(0, 15)} . . .
                       </p>
                       <p className="text-center text-gray-500">
                         {listing?.regularPrice} ETB
                       </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center items-center text-sm">
                       <Link
                         to={`/update-listing/${listing._id}`}
-                        className="bg-blue-700 text-white rounded-md px-2 py-1 uppercase hover:bg-blue-900 transition-colors font-bold text-sm"
+                        className="bg-blue-700 text-white rounded-md px-2 py-1 uppercase hover:bg-blue-900 transition-colors font-semibold"
                       >
-                        Edit
+                        <FaEdit />
                       </Link>
                       <button
                         onClick={() => handleDeleteListing(listing._id)}
-                        className="bg-red-700 text-white rounded-md px-2 py-1 uppercase hover:bg-red-900 transition-colors font-bold text-sm"
+                        className="bg-red-700 text-white rounded-md px-2 py-1 uppercase hover:bg-red-900 transition-colors font-semibold"
                       >
-                        Delete
+                        <FaTrash />
                       </button>
                     </div>
                   </div>
                 ))
-              ) : (
+              ) : !fetchingListings ? (
                 <p className="text-center text-gray-500">No listings found</p>
+              ) : (
+                ''
               )}
             </div>
           )}

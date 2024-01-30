@@ -71,7 +71,7 @@ const Header = () => {
             <Link to="about">About</Link>
           </li>
           {currentUser ? (
-            <li className="mx-2 hidden sm:flex relative z-50">
+            <li className="mx-2 relative z-50">
               <button onClick={handleDropDown}>
                 <img
                   src={currentUser?.avatar}
