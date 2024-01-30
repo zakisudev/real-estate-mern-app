@@ -60,8 +60,8 @@ const Listing = () => {
       {listing && !loading && !errorMsg && (
         <>
           <Swiper navigation spaceBetween={50} slidesPerView={1}>
-            {listing?.imageURLs?.map((image) => (
-              <SwiperSlide key={image}>
+            {listing?.imageURLs?.map((image, index) => (
+              <SwiperSlide key={index}>
                 <div
                   className="h-[400px]"
                   style={{
@@ -72,6 +72,7 @@ const Listing = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+
           <div className="flex flex-col p-5">
             <div className="text-3xl font-semibold">
               {listing?.title} - $

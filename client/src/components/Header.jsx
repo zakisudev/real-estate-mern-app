@@ -75,7 +75,7 @@ const Header = () => {
         >
           <input
             type="text"
-            value={searchTerm}
+            value={searchTerm || ''}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search..."
             className="focus:outline-none w-full rounded-md"
