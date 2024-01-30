@@ -63,7 +63,7 @@ const Header = () => {
             <FaSearch />
           </button>
         </form>
-        <ul className="flex items-center">
+        <ul className="flex items-center h-full">
           <li className="mx-2 hidden sm:flex">
             <Link to="/">Home</Link>
           </li>
@@ -76,7 +76,7 @@ const Header = () => {
                 <img
                   src={currentUser?.avatar}
                   alt="avatar"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="pt-1 w-8 h-8 rounded-full object-cover"
                 />
                 <div
                   className={
