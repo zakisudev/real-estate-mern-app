@@ -63,7 +63,7 @@ const Home = () => {
       </div>
 
       {/* Swiper */}
-      {offerListings && offerListings?.length > 0 && (
+      {/* {offerListings && offerListings?.length > 0 && (
         <Swiper navigation spaceBetween={50} slidesPerView={1}>
           {rentListings?.map((listing, index) => (
             <SwiperSlide key={index}>
@@ -77,7 +77,7 @@ const Home = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-      )}
+      )} */}
 
       {/* Listings */}
       <div className="flex flex-col gap-5 w-full">
