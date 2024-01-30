@@ -119,7 +119,7 @@ const UpdateListing = () => {
         setListingLoading(false);
         setListingError(null);
         reset();
-        navigate(`/listing/${res?.createdListing?._id}`);
+        navigate(`/listing/${res?.updatedListing?._id}`);
       } else {
         setListingLoading(false);
         setListingError(res.message);

@@ -47,7 +47,7 @@ const Header = () => {
     });
   }, [currentUser]);
   return (
-    <header className="bg-slate-200">
+    <header className="bg-slate-200 z-20">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
         <Link to="/" className="font-bold text-sm sm:text-xl flex flex-wrap">
           <span className="text-blue-700">Real</span>
@@ -71,7 +71,7 @@ const Header = () => {
             <Link to="about">About</Link>
           </li>
           {currentUser ? (
-            <li className="mx-2 hidden sm:flex relative">
+            <li className="mx-2 hidden sm:flex relative z-50">
               <button onClick={handleDropDown}>
                 <img
                   src={currentUser?.avatar}
