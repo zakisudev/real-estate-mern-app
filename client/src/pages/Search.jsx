@@ -16,6 +16,7 @@ const Search = () => {
   });
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [showMore, setShowMore] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -29,6 +30,28 @@ const Search = () => {
     urlParams.set('order', sidebarData.order);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
+  };
+
+  const handleShowMore = async () => {
+    const listingsLength = listings.length;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('startIndex', listingsLength);
+    const searchQuery = urlParams.toString();
+    try {
+      const res = await getAllListings(searchQuery);
+      if (res.status) {
+        if (res?.listings?.length > 9) {
+          setShowMore(true);
+        } else {
+          setShowMore(false);
+        }
+        setListings([...listings, ...(res?.listings ?? [])]);
+      } else {
+        console.log(res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -55,10 +78,14 @@ const Search = () => {
 
     const fetchListings = async () => {
       setLoading(true);
+      setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await getAllListings(searchQuery);
 
       if (res.status) {
+        if (res?.listings?.length > 9) {
+          setShowMore(true);
+        }
         setListings(res?.listings);
       } else {
         console.log(res);
@@ -258,6 +285,15 @@ const Search = () => {
           </div>
         ) : (
           <h1 className="text-xl font-semibold mt-2">No results found</h1>
+        )}
+
+        {showMore && (
+          <button
+            className="bg-slate-700 rounded-lg px-2 py-1 w-full sm:max-w-[400px] sm:w-64 justify-center items-center text-white font-semibold hover:bg-slate-900 transition-all duration-200 my-2 mx-auto uppercase"
+            onClick={handleShowMore}
+          >
+            Load More
+          </button>
         )}
       </div>
     </div>
