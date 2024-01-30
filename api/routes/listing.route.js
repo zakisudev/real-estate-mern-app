@@ -21,7 +21,7 @@ router.post('/create', verifyUser, createListing);
 router.get('/user/:id', verifyUser, getUserListing);
 
 // @desc    Get all listings
-// @route   GET /api/listings/
+// @route   GET /api/listings
 // @access  Public
 router.get('/', getListings);
 // @desc    Get a listing

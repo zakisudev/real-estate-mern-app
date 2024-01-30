@@ -74,7 +74,8 @@ const Listing = () => {
           </Swiper>
           <div className="flex flex-col p-5">
             <div className="text-3xl font-semibold">
-              {listing?.title} - ${listing?.regularPrice} / month
+              {listing?.title} - $
+              {listing?.regularPrice.toLocaleString('en-US')} / month
             </div>
             <p className="flex items-center my-3 gap-2 text-slate-600">
               <FaMapMarkerAlt className="text-green-700" />
@@ -86,7 +87,7 @@ const Listing = () => {
               </p>
               {listing?.offer && (
                 <p className="bg-green-700 w-full max-w-[150px] text-white text-center rounded-md font-semibold">
-                  ${+listing?.regularPrice - +listing?.discountPrice}
+                  ${+listing?.regularPrice - +listing?.discountPrice} OFF
                 </p>
               )}
             </div>

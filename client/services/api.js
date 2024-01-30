@@ -78,7 +78,7 @@ export const createListing = async (data) => {
   }
 };
 
-export const getListings = async (id) => {
+export const getUserListings = async (id) => {
   try {
     const res = await axios.get(`${LISTINGS_URL}/user/${id}`);
     return res?.data;
@@ -108,6 +108,15 @@ export const deleteListing = async (id) => {
 export const updateListing = async (data, id) => {
   try {
     const res = await axios.put(`${LISTINGS_URL}/${id}`, data);
+    return res?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+export const getAllListings = async (searchQuery) => {
+  try {
+    const res = await axios.get(`${LISTINGS_URL}?${searchQuery}`);
     return res?.data;
   } catch (error) {
     return error?.response?.data;

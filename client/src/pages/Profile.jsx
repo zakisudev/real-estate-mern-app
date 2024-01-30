@@ -20,7 +20,7 @@ import {
   deleteListing,
   deleteUser,
   profileUpdate,
-  getListings,
+  getUserListings,
 } from '../../services/api';
 import { toast } from 'react-toastify';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -125,7 +125,7 @@ const Profile = () => {
     }
     setFetchingListings(true);
     try {
-      const res = await getListings(currentUser._id);
+      const res = await getUserListings(currentUser._id);
       if (res.status) {
         setUserListings(res?.listings);
         setFetchingListings(false);
@@ -332,7 +332,7 @@ const Profile = () => {
                         {listing?.description.slice(0, 15)} . . .
                       </p>
                       <p className="text-center text-gray-500">
-                        {listing?.regularPrice} ETB
+                        {listing?.regularPrice.toLocaleString('en-US')} ETB
                       </p>
                     </div>
 
@@ -344,6 +344,7 @@ const Profile = () => {
                         <FaEdit />
                       </Link>
                       <button
+                        // disabled=
                         onClick={() => handleDeleteListing(listing._id)}
                         className="bg-red-700 text-white rounded-md px-2 py-1 uppercase hover:bg-red-900 transition-colors font-semibold"
                       >
