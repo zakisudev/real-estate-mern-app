@@ -5,6 +5,13 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css/bundle';
+import {
+  FaBath,
+  FaBed,
+  FaChair,
+  FaMapMarkerAlt,
+  FaParking,
+} from 'react-icons/fa';
 
 const Listing = () => {
   SwiperCore.use([Navigation]);
@@ -48,11 +55,7 @@ const Listing = () => {
 
       {listing && !loading && !errorMsg && (
         <>
-          <Swiper
-            navigation
-            // spaceBetween={50}
-            // slidesPerView={1}
-          >
+          <Swiper navigation spaceBetween={50} slidesPerView={1}>
             {listing?.imageURLs?.map((image) => (
               <SwiperSlide key={image}>
                 <div
@@ -65,10 +68,51 @@ const Listing = () => {
               </SwiperSlide>
             ))}
           </Swiper>
-          <div>{listing?.title}</div>
-          <div>{listing?.description}</div>
-          <div>{listing?.address}</div>
-          <div>{listing?.regularPrice}</div>
+          <div className="flex flex-col p-5">
+            <div className="text-3xl font-semibold">
+              {listing?.title} - ${listing?.regularPrice} / month
+            </div>
+            <p className="flex items-center my-3 gap-2 text-slate-600">
+              <FaMapMarkerAlt className="text-green-700" />
+              {listing?.address}, {listing?.state}
+            </p>
+            <div className="flex items-center gap-2">
+              <p className="bg-red-700 w-full max-w-[150px] text-white text-center rounded-md font-semibold">
+                {listing?.type === 'rent' ? 'For Rent' : 'For Sale'}
+              </p>
+              {listing?.offer && (
+                <p className="bg-green-700 w-full max-w-[150px] text-white text-center rounded-md font-semibold">
+                  ${+listing?.regularPrice - +listing?.discountPrice}
+                </p>
+              )}
+            </div>
+
+            <ul className="flex gap-2 sm:gap-6 mt-3 justify-around text-green-900 font-semibold text-sm max-w-[400px]">
+              <li className="flex gap-1 whitespace-nowrap">
+                <FaBed className="text-lg" />
+                {listing?.bedrooms} {listing?.bedrooms > 1 ? 'beds' : 'bed'}
+              </li>
+              <li className="flex gap-1 whitespace-nowrap">
+                <FaBath className="text-lg" />
+                {listing?.bathrooms} {listing?.bathrooms > 1 ? 'baths' : 'bath'}
+              </li>
+              <li className="flex gap-1 whitespace-nowrap">
+                <FaParking className="text-lg" />
+                {listing?.parking} {listing?.parking ? 'Parking' : 'no parking'}
+              </li>
+              <li className="flex gap-1 whitespace-nowrap">
+                <FaChair className="text-lg" />
+                {listing?.furnished ? 'Furnished' : 'Unfurnished'}
+              </li>
+            </ul>
+
+            <p className="mt-5 text-gray-600">
+              <span className="text-xl font-semibold text-black">
+                Description:{' '}
+              </span>
+              {listing?.description}
+            </p>
+          </div>
         </>
       )}
     </main>
