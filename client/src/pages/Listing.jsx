@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css/bundle';
+import { useSelector } from 'react-redux';
 import {
   FaBath,
   FaBed,
@@ -12,13 +13,16 @@ import {
   FaMapMarkerAlt,
   FaParking,
 } from 'react-icons/fa';
+import ContactForm from '../components/ContactForm';
 
 const Listing = () => {
+  const { currentUser } = useSelector((state) => state.user);
   SwiperCore.use([Navigation]);
   const { id } = useParams();
   const [listing, setListing] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [contact, setContact] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -112,6 +116,20 @@ const Listing = () => {
               </span>
               {listing?.description}
             </p>
+
+            {currentUser &&
+              listing?.userRef !== currentUser?._id &&
+              !contact && (
+                <div className="flex flex-col gap-2 mt-5">
+                  <button
+                    onClick={() => setContact(true)}
+                    className="uppercase text-white rounded-md bg-gray-700 max-w-[360px] font-semibold"
+                  >
+                    Contact Landlord
+                  </button>
+                </div>
+              )}
+            {contact && <ContactForm listing={listing} />}
           </div>
         </>
       )}

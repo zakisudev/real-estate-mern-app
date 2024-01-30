@@ -16,6 +16,27 @@ const getUsers = asyncHandler(async (_, res) => {
   }
 });
 
+// @desc    Get a user
+// @route   GET /api/users/:id
+// @access  Private
+const getUser = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params?.id);
+    if (!user) {
+      res.status(404).json({ message: 'User not found!', status: false });
+    }
+
+    res.status(200).json({
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar,
+      status: true,
+    });
+  } catch (err) {
+    res.status(400).json({ msg: err.message, status: false });
+  }
+});
+
 // @desc    Delete a user
 // @route   DELETE /api/users/:id
 // @access  Public
@@ -93,6 +114,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
 module.exports = {
   getUsers,
+  getUser,
   deleteUser,
   updateUser,
 };
