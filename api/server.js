@@ -30,10 +30,10 @@ app.use('/api/listings', listingRoutes);
 
 // API Route
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.use(express.static(path.join(__dirname, '../client/dist')));
 
   app.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname, '../frontend', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../client', 'dist', 'index.html'));
   });
 } else {
   app.get('/', (req, res) => {
