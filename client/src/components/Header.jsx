@@ -13,6 +13,7 @@ import { logoutUser } from '../../services/api';
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { currentUser } = useSelector((state) => state.user);
   const [showDropDown, setShowDropDown] = useState(false);
@@ -37,6 +38,14 @@ const Header = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('searchTerm', searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
   useEffect(() => {
     document.addEventListener('click', (e) => {
       if (e.target.closest('button')) {
@@ -46,6 +55,13 @@ const Header = () => {
       }
     });
   }, [currentUser]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const term = urlParams.get('searchTerm');
+    setSearchTerm(term);
+  }, [location.search]);
+
   return (
     <header className="bg-slate-200 z-20">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -53,9 +69,14 @@ const Header = () => {
           <span className="text-blue-700">Real</span>
           <span className="text-red-700">Estate</span>
         </Link>
-        <form className="bg-slate-100 rounded-lg px-2 py-1 w-24 sm:w-64 flex">
+        <form
+          onSubmit={handleSearch}
+          className="bg-slate-100 rounded-lg px-2 py-1 w-24 sm:w-64 flex"
+        >
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search..."
             className="focus:outline-none w-full rounded-md"
           />
