@@ -28,7 +28,7 @@ const getUserListing = asyncHandler(async (req, res) => {
 
   try {
     const listings = await Listing.find({ userRef: req.params.id });
-    if (!listings) {
+    if (!listings || listings.length === 0) {
       res.status(404).json({ message: 'No listings found!', status: false });
     }
 
@@ -118,40 +118,53 @@ const getListing = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/listings/:id
 // @access  Private
 const deleteListing = asyncHandler(async (req, res) => {
-  const listing = await Listing.findByIdAndDelete(req.params.id);
-  if (listing.userRef !== req.user._id.toString()) {
-    res
-      .status(401)
-      .json({ message: 'You can only delete your listings!', status: false });
-  }
+  try {
+    const listing = await Listing.findById(req.params.id);
 
-  if (!listing) {
-    res.status(404).json({ message: 'Listing not found!', status: false });
-  }
+    if (!listing) {
+      res.status(404).json({ message: 'Listing not found!', status: false });
+    }
 
-  res.status(200).json({ status: true });
+    if (req.user._id.toString() !== listing.userRef.toString()) {
+      res
+        .status(401)
+        .json({ message: 'You can only delete your listings!', status: false });
+    }
+
+    const deletedListing = await Listing.findByIdAndDelete(req.params.id);
+
+    if (!deletedListing) {
+      res
+        .status(404)
+        .json({ message: 'Error, Listing not deleted!', status: false });
+    }
+
+    res.status(200).json({ status: true });
+  } catch (err) {
+    res.status(400).json({ msg: err.message, status: false });
+  }
 });
 
 // @desc   Update a listing
 // @route  PUT /api/listings/:id
 // @access Private
 const updateListing = asyncHandler(async (req, res) => {
-  const listing = await Listing.findById(req.params?.id);
-
-  if (!listing) {
-    res.status(404).json({
-      message: 'Listing not found!',
-      status: false,
-    });
-  }
-
-  if (listing.userRef !== req.user._id.toString()) {
-    res
-      .status(401)
-      .json({ message: 'You can only update your listings!', status: false });
-  }
-
   try {
+    const listing = await Listing.findById(req.params?.id);
+
+    if (!listing) {
+      res.status(404).json({
+        message: 'Listing not found!',
+        status: false,
+      });
+    }
+
+    if (listing.userRef.toString() !== req.user._id.toString()) {
+      res
+        .status(401)
+        .json({ message: 'You can only update your listings!', status: false });
+    }
+
     const updatedListing = await Listing.findByIdAndUpdate(
       req.params?.id,
       req.body,
@@ -160,6 +173,13 @@ const updateListing = asyncHandler(async (req, res) => {
         runValidators: true,
       }
     );
+
+    if (!updatedListing) {
+      res.status(404).json({
+        message: 'Error, Listing not updated!',
+        status: false,
+      });
+    }
 
     res.status(200).json({ updatedListing, status: true });
   } catch (err) {
