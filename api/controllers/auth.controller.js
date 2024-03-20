@@ -18,15 +18,14 @@ const signup = asyncHandler(async (req, res) => {
         .json({ message: 'User already exists', status: false });
     }
 
-    const hash = await hashPassword(password);
     const user = await User.create({
       username,
       email,
-      password: hash,
+      password: await hashPassword(password),
     });
     if (!user) {
       return res.status(400).json({
-        message: 'Something went wrong while saving the user',
+        message: 'Something went wrong while creating the user',
         status: false,
       });
     }
@@ -68,7 +67,7 @@ const login = asyncHandler(async (req, res) => {
 
     return res
       .cookie('jwt', generateToken(user), { httpOnly: true })
-      .status(201)
+      .status(200)
       .json({
         user: {
           _id: user._id,
@@ -86,7 +85,7 @@ const login = asyncHandler(async (req, res) => {
 // @desc    Logout a user
 // @route   POST /api/auth/logout
 // @access  Public
-const logout = asyncHandler(async (req, res) => {
+const logout = asyncHandler(async (_, res) => {
   try {
     res
       .status(200)
@@ -125,14 +124,13 @@ const googleLogin = asyncHandler(async (req, res) => {
     } else {
       const password =
         Math.random().toString(36).slice(-8) + email + process.env.JWT_SECRET;
-      const hash = await hashPassword(password);
 
       const user = await User.create({
         username:
           username.split(' ').join('').toLowerCase() +
           Math.random().toString(36).slice(-8),
         email,
-        password: hash,
+        password: await hashPassword(password),
         avatar,
       });
 
