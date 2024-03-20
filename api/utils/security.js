@@ -3,13 +3,11 @@ const jwt = require('jsonwebtoken');
 
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  return hashedPassword;
+  return await bcrypt.hash(password, salt);
 };
 
 const comparePassword = async (password, hashedPassword) => {
-  const isMatch = await bcrypt.compare(password, hashedPassword);
-  return isMatch;
+  return await bcrypt.compare(password, hashedPassword);
 };
 
 const generateToken = (user) => {
@@ -21,7 +19,7 @@ const generateToken = (user) => {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: '30d',
+      expiresIn: '2d',
     }
   );
 };
