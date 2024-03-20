@@ -15,15 +15,14 @@ connectDB();
 const app = express();
 
 // Init Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// cors
 app.use(cors());
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(notFound);
+app.use(errorHandler);
 
 // Define Routes
-
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
@@ -32,18 +31,14 @@ app.use('/api/listings', listingRoutes);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  app.get('*', function (req, res) {
+  app.get('*', function (_, res) {
     res.sendFile(path.join(__dirname, '../client', 'dist', 'index.html'));
   });
 } else {
-  app.get('/', (req, res) => {
+  app.get('/', (_, res) => {
     res.send('API is running...');
   });
 }
-
-// middleware
-app.use(notFound);
-app.use(errorHandler);
 
 // Listen to port
 app.listen(port, () => console.log(`App listening on port ${port}!`));
