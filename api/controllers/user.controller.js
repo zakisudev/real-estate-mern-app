@@ -9,7 +9,7 @@ const { hashPassword } = require('../utils/security');
 const getUsers = asyncHandler(async (_, res) => {
   try {
     const users = await User.find();
-    if (!users) throw Error('No users exist');
+    if (!users) throw Error('No users found');
     res.status(200).json(users, { status: true });
   } catch (err) {
     res.status(400).json({ msg: err.message, status: false });
@@ -44,7 +44,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   if (req.user._id !== req.params.id) {
     res
       .status(401)
-      .json({ message: 'You can update only your account!', status: false });
+      .json({ message: 'You can only delete your account!', status: false });
   }
 
   try {
@@ -73,7 +73,7 @@ const updateUser = asyncHandler(async (req, res) => {
   if (req.user._id !== req.params.id) {
     res
       .status(401)
-      .json({ message: 'You can update only your account!', status: false });
+      .json({ message: 'You can only update your account!', status: false });
   }
 
   if (req.body.password) {
@@ -98,7 +98,9 @@ const updateUser = asyncHandler(async (req, res) => {
     );
 
     if (!updatedUser) {
-      res.status(404).json({ message: 'User not found!', status: false });
+      return res
+        .status(404)
+        .json({ message: 'User not saved!', status: false });
     }
 
     res.status(200).json({
