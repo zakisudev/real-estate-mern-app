@@ -16,4 +16,12 @@ const verifyUser = (req, res, next) => {
   }
 };
 
-module.exports = verifyUser;
+const verifyAdmin = (req, res, next) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(401).json({ msg: 'Admin Access Denied' });
+  }
+
+  next();
+};
+
+module.exports = { verifyUser, verifyAdmin };
